@@ -19,7 +19,7 @@ class AddTodo extends Component {
     }    
     onButtonClick=()=>{
         this.add(this.state.item);
-        this.setState({items:{title:""}});
+        this.setState({item:{title:""}});//이부분이 없으면 id초기화가 안된다 왜그런지?????
     }
     enterKeyEventHandler=(e)=>{
         if(e.key==="Enter"){
