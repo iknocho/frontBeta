@@ -1,17 +1,19 @@
 import logo from './logo.svg';
 import React, { Component } from "react";
-import { Paper,List,Container } from '@material-ui/core';
+import { Paper,List,Container,Grid,Button,AppBar,Toolbar,Typography } from '@material-ui/core';
 import './App.css';
 import Todo from './Todo';
 import AddTodo from './AddTodo';
-import { call } from './service/ApiService';
+import { call,signout } from './service/ApiService';
+import Loading from './Loading';
 
 class App extends Component {
   constructor(props){
     super(props);
     //item->item배열로  초기 items에는 title이없는데 Todo.js로 넘길때 오류가 안나는 이유???
     this.state={
-      items:[ ]
+      items:[ ],
+      loading:true
     };
     this.a={a:"1"};
   }
@@ -19,7 +21,7 @@ class App extends Component {
   componentDidMount(){//마운팅이 끝나고 바로 실행되는 함수
     //todoList를 렌더링 되자마자 리스트로 보여주기 위해서
    call("/todo","GET",null)
-   .then((json)=>this.setState({items:json.data})
+   .then((json)=>this.setState({items:json.data,loading:false})
    );
   }
   
@@ -128,14 +130,39 @@ class App extends Component {
             </List>
           </Paper>
         );
-          //3. 생성된 컴포넌트 리턴
-          return (
-            <div className="App">
+
+        var navigationBar=(
+        <AppBar position="static">
+          <Toolbar>
+            <Grid justify="space-between" container>
+              <Grid item>
+                <Typography variant="h6">TODO</Typography>
+              </Grid>
+              <Button color="inherit" onClick={signout}>
+                Logout
+              </Button>
+            </Grid>
+          </Toolbar>
+        </AppBar>
+        )
+        var todoListPage=(
+          <div className="App">
+              {navigationBar}
               <Container maxWidth="md">
                 <AddTodo add={this.add}/>
                 <div className="TodoList">{todoItems}</div>
               </Container>
-            </div>);
+            </div>
+            );
+        var loading=<Loading/>
+        var content =loading;
+        if(!this.state.loading){
+          content=todoListPage;
+        }
+          //3. 생성된 컴포넌트 리턴
+          return (
+            <div className="App">{content}</div>
+          );
   }
 }
 
